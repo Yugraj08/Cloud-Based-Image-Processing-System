@@ -11,15 +11,18 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
  * 
  * @param {File} file - The original image file
  * @param {Object} options - Processing options (resize, grayscale, quality, format)
+ * @param {Function} onProgress - Optional callback for pipeline visualization (step string)
  * @returns {Promise<Object>} The processed image blob and filename
  */
-export const processImageAPI = async (file, options) => {
+export const processImageAPI = async (file, options, onProgress = () => {}) => {
   
   // Step 1: Request Upload URL and Job ID
+  onProgress('initializing');
   const jobOptions = {
     filename: file.name,
     resize: options.resize,
     grayscale: options.grayscale,
+    watermark: options.watermark,
     quality: options.quality,
     format: options.format
   };
@@ -34,17 +37,30 @@ export const processImageAPI = async (file, options) => {
   const jobData = await jobRes.json();
   const { jobId, uploadUrl } = jobData.data;
 
-  // Step 2: Upload directly to S3 (or mock S3)
+  // Step 2: Upload directly to S3
+  onProgress('uploading');
   const uploadRes = await fetch(uploadUrl, {
     method: 'PUT',
-    body: file
+    body: file,
+    headers: { 'Content-Type': file.type || 'application/octet-stream' }
   });
 
   if (!uploadRes.ok) throw new Error("Failed to upload image to S3");
 
   // Step 3: Poll for completion
+  onProgress('processing');
   return new Promise((resolve, reject) => {
+    let pollCount = 0;
+    const maxPolls = 60; // 2 mins max
+    
     const poll = setInterval(async () => {
+      pollCount++;
+      if (pollCount > maxPolls) {
+        clearInterval(poll);
+        reject(new Error("Processing timeout"));
+        return;
+      }
+      
       try {
         const statusRes = await fetch(`${API_BASE_URL}/jobs/${jobId}`);
         const statusData = await statusRes.json();
@@ -53,16 +69,19 @@ export const processImageAPI = async (file, options) => {
           clearInterval(poll);
           
           // Step 4: Download processed image
+          onProgress('downloading');
           const downloadRes = await fetch(statusData.data.downloadUrl);
           const blob = await downloadRes.blob();
           
+          onProgress('completed');
           resolve({
             blob,
-            filename: statusData.data.filename
+            filename: statusData.data.filename,
+            downloadUrl: statusData.data.downloadUrl
           });
         } else if (statusData.data.status === 'failed') {
           clearInterval(poll);
-          reject(new Error("Image processing failed"));
+          reject(new Error("Image processing failed on AWS"));
         }
       } catch (err) {
         clearInterval(poll);
