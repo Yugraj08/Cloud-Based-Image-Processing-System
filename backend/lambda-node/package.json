@@ -1,0 +1,13 @@
+{
+  "name": "aws-lambda-image-processor",
+  "version": "1.0.0",
+  "description": "AWS Lambda image processor using Sharp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.629.0",
+    "sharp": "^0.33.4"
+  }
+}
