@@ -4,6 +4,12 @@
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![AWS](https://img.shields.io/badge/AWS-Serverless-FF9900) ![React](https://img.shields.io/badge/React-Frontend-61DAFB)
 
+<br/>
+<div align="center">
+  <img src="./frontend/Screenshot/Screenshot%202026-09-13%20213219.png" alt="Cloud Image Processor Screenshot" width="800"/>
+</div>
+<br/>
+
 ## 📖 Overview
 
 The **Cloud Image Processor** is a premium, production-ready web application that allows users to effortlessly upload, resize, watermark, and format images entirely in the cloud. 
