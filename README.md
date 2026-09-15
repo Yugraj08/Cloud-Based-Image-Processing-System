@@ -6,7 +6,10 @@
 
 <br/>
 <div align="center">
-  <img src="./frontend/Screenshot/Screenshot%202026-09-13%20213219.png" alt="Cloud Image Processor Screenshot" width="800"/>
+  <img src="./frontend/Screenshot/Screenshot%202026-09-13%20213219.png" alt="Cloud Image Processor Screenshot 1" width="800"/>
+  <br/>
+  <br/>
+  <img src="./frontend/Screenshot/Screenshot%202026-09-15%20165450.png" alt="Cloud Image Processor Screenshot 2" width="800"/>
 </div>
 <br/>
 
